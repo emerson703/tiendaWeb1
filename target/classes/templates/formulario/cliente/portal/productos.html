@@ -1,0 +1,59 @@
+<!-- src/main/resources/templates/cliente/historial.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="plantillas/headerCliente :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-content w-100">
+        <div class="container mt-4">
+
+            <!-- Tarjeta de productos -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <h4 th:text="${titulo}" class="text-center">Título por defecto</h4>
+
+                    <!-- card de productos -->
+                    <div th:if="${not #lists.isEmpty(listadoProducto)}" class="row">
+                        <!-- Itera sobre la lista de productos -->
+                        <div th:each="producto : ${listadoProducto}" class="col-md-3 mb-3">
+                            <div class="card">
+                                <img th:src="@{/producto/} + ${producto.imagen}" class="card-img-top" alt="Imagen del producto" width="300" height="200">
+
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${producto.nombre}">Nombre del producto</h5>
+                                    <p class="card-text" th:text="${producto.descripcion}">Descripción del producto</p>
+                                    <p class="card-text" style="font-size: 1.25rem; color: #2c3e50;">
+                                        <strong>Precio: S/.</strong>
+                                        <span th:text="${producto.precio}" style="color: #e74c3c; font-weight: bold;">Precio del producto</span>
+                                    </p>
+                                    <!-- Enlace para ver detalle -->
+
+                                    <!-- Botón para agregar al carrito -->
+                                    <a href="#" class="btn btn-primary btn-agregar-carrito"
+                                       th:attr="data-producto-idProducto=${producto.idProducto}, data-producto-categoria=${producto.categoria}"
+                                       onclick="agregarCarrito(event)">Agregar</a>
+                                    <li class="nav-item">
+                                        <a class="nav-link"th:href="@{/carrito/carro}"><i class="fas fa-shopping-cart"></i> Carrito</a>
+                                    </li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+
+</body>
+</html>

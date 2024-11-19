@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head"></head>
+<body>
+<div th:replace="plantillas/headerHome :: navbar"></div>
+<div class="container mt-4">
+
+    <div class="card">
+        <h5 class="card-title">Datos Personales</h5>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="idClienteAnonimo">ID Cliente Anónimo:</label>
+                <p id="idClienteAnonimo"></p>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <p id="nombre"></p>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <p id="email"></p>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <p id="telefono"></p>
+            </div>
+        </div>
+
+        <div>
+            <p>En caso de no ser el usuario cerrar session </p>
+            <button class="btn btn-danger" id="cerrarSesionBtn">Cerrar Sesión</button>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${titulo}">Titulo por defecto</h5>
+            <a class="btn btn-danger mb-3" th:href="@{/}">Regresar</a>
+            <form id="marcaForm" method="post" th:action="@{/procesarCarrito}">
+
+                <div class="form-group">
+                    <label for="metodoPago">Método de Pago:</label>
+                    <select id="metodoPago" name="metodoPago" class="form-control" required>
+                        <option value="" disabled selected>Seleccione un método de pago</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="yape">Yape</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="resumenCarrito">
+        <!-- Aquí se actualizará dinámicamente el resumen del carrito -->
+    </div>
+
+    <script>
+        // Función para obtener el resumen del carrito usando fetch
+        function obtenerResumenCarrito() {
+            fetch('/carrito/resumenCarrito')
+                .then(response => response.json())
+                .then(productos => {
+                    const resumenHTML = productos.map(producto => `
+                        <div>
+                            <p>Nombre: ${producto.nombre}</p>
+                            <p>Cantidad: ${producto.cantidad}</p>
+                            <p>Precio Total: ${producto.precioTotal}</p>
+                        </div>
+                    `).join('');
+                    document.getElementById('resumenCarrito').innerHTML = resumenHTML;
+                })
+                .catch(error => console.error('Error al obtener el resumen del carrito:', error));
+        }
+
+        // Llamar a la función al cargar la página
+        window.onload = obtenerResumenCarrito;
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/session/datosSesion')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('idClienteAnonimo').textContent = data.idClienteAnonimo || 'N/A';
+                    document.getElementById('nombre').textContent = data.nombre || 'N/A';
+                    document.getElementById('email').textContent = data.email || 'N/A';
+                    document.getElementById('telefono').textContent = data.telefono || 'N/A';
+                })
+                .catch(error => console.error('Error:', error));
+
+            document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
+                fetch('/session/cerrarSesion', { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            // Redirigir o actualizar la página después de cerrar sesión
+                            window.location.href = '/';
+                        } else {
+                            console.error('Error al cerrar sesión');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

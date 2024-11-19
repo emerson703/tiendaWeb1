@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${titulo}" >Titulo por defecto</h5>
+
+            <form id="from" th:action="@{/categoria/guardar}" th:object="${categoria}" method="post" onsubmit="guardarMarca(event)">
+                <input type="hidden" th:field="*{idCategoria}">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                </div>
+                <div class="form-group" th:if="${categoria.idCategoria != null}">
+                    <label for="estado">Estado:</label>
+                    <select class="form-control" id="estado" th:field="*{visible}">
+                        <option th:value="true" th:text="Activo"></option>
+                        <option th:value="false" th:text="Inactivo"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+            <a class="btn btn-danger mb-3" th:href="@{/categoria/}">regresar</a>
+        </div>
+    </div>
+
+
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+<!-- Script personalizado -->
+<script th:inline="javascript">
+    async function guardarMarca(event) {
+        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+        try {
+            // Obtener los valores del formulario
+            const id = document.querySelector('input[name="idCategoria"]').value;
+            const nombre = document.getElementById('nombre').value;
+            const estado = document.getElementById('estado') ? document.getElementById('estado').value : true;
+
+            // Crear un objeto JSON con los datos del formulario
+            const data = {
+                idCategoria: id,
+                nombre: nombre,
+                visible: estado === true
+            };
+
+            // Convertir el objeto JSON a cadena
+            const jsonData = JSON.stringify(data);
+
+            // Realizar la solicitud AJAX para guardar la marca
+            const response = await fetch('/categoria/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud de guardado');
+            }
+
+            // Mostrar mensaje de éxito con SweetAlert2
+            Swal.fire({
+                title: "¡Guardado!",
+                text: "La categoria ha sido guardada exitosamente",
+                icon: "success"
+            }).then(() => {
+                // Redirigir o actualizar la página según tu flujo de la aplicación
+                window.location.href = '/categoria/';
+            });
+
+        } catch (error) {
+            // Mostrar mensaje de error con SweetAlert2
+            Swal.fire({
+                title: "Error",
+                text: "Hubo un error al guardar la categoria",
+                icon: "error"
+            });
+            console.error('Error:', error);
+        }
+    }
+</script>
+
+</body>
+</html>

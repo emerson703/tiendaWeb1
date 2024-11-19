@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${titulo}" >Titulo por defecto</h5>
+            <a class="btn btn-danger mb-3" th:href="@{/producto/nuevo}">Nuevo</a>
+            <!-- Verifica si la lista  no está vacía -->
+            <div th:if="${not #lists.isEmpty(listProducto)}">
+                <table class="table datatable  table table-striped table-bordered table-hover table-responsive ">
+
+                    <thead class="table-striped">
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Categoria</th>
+                        <th>Marca</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+
+                        <th>Stock</th>
+                        <th>Visible</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="producto : ${listProducto}">
+                        <td>
+                            <img th:src="@{'/producto/' + ${producto.imagen}}" class="rounded-circle" alt="Imagen del producto"
+                                 style="width: 100px; height: 100px;">
+                        </td>
+                        <td th:text="${producto.categoria.nombre}">Nombre vacío</td>
+                        <td th:text="${producto.marca.nombre}">Nombre vacío</td>
+                        <td th:text="${producto.nombre}">Nombre vacío</td>
+                        <td th:text="${producto.descripcion}">Descripción vacía</td>
+                        <td th:text="${producto.precio}">Precio vacío</td>
+
+                        <td th:text="${producto.stock}">Stock vacío</td>
+                        <td th:if="${producto.visible}">Activo</td>
+                        <td th:if="${!producto.visible}">Inactivo</td>
+                        <td>
+                            <a href="#" class="btn btn-secondary"
+                               th:attr="data-producto-idProducto=${producto.idProducto}"
+                               onclick="verDetalle(event)">Detalle</a>
+
+                            <a href="#" class="btn btn-secondary"
+                               th:attr="data-producto-idProducto=${producto.idProducto}, data-categoria-nombre=${producto.nombre}"
+                               onclick="editar(event)">Editar</a>
+
+
+                            <a href="#" class="btn btn-secondary"
+                               th:attr="data-producto-idProducto=${producto.idProducto}, data-categoria-nombre=${producto.nombre}"
+                               onclick="eliminar(event)">Eliminar</a>
+
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Si la lista está vacía -->
+            <div th:if="${#lists.isEmpty(listProducto)}">
+                <p th:text="${mensajeList}">sin datos por defecto</p>
+            </div>
+        </div>
+    </div>
+
+
+</main><!-- End #main -->
+
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+
+
+<!-- Script personalizado -->
+<script th:inline="javascript">
+    var uriVerDetalle="/home/verProducto/";
+    var uriEditar="/producto/editar/";
+    var uriEliminar='/producto/eliminar?id=';
+
+    // Función para editar categoría
+    function editar(event) {
+        var id = event.target.getAttribute('data-producto-idProducto');
+        // Ejemplo de redirección a una URL para editar
+        window.location.href = uriEditar + id;
+    }
+
+    function verDetalle(event) {
+        var id = event.target.getAttribute('data-producto-idProducto');
+        // Ejemplo de redirección a una URL para editar
+       // window.location.href = uriVerDetalle + id;
+        var urlDetalle = uriVerDetalle + id;
+        window.open(urlDetalle, '_blank');
+    }
+
+    // Función para eliminar categoría
+    function eliminar(event) {
+        var id = event.target.getAttribute('data-producto-idProducto');
+
+
+        // Mostrar confirmación con SweetAlert2
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "No podrás revertir esto",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminarlo"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Realizar la solicitud DELETE usando fetch
+                fetch(uriEliminar + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la solicitud de eliminación');
+                        }
+                        // Mostrar mensaje de éxito con SweetAlert2
+                        return Swal.fire({
+                            title: "¡Eliminado!",
+                            text: "La producto ha sido eliminada",
+                            icon: "success"
+                        });
+                    })
+                    .then(() => {
+                        // Redirigir o actualizar la página según tu flujo de la aplicación
+                        window.location.reload(); // Ejemplo: recargar la página
+                    })
+                    .catch(error => {
+                        // Mostrar mensaje de error con SweetAlert2
+                        Swal.fire({
+                            title: "Error",
+                            text: "Hubo un error al eliminar la producto",
+                            icon: "error"
+                        });
+                    });
+            }
+        });
+    }
+</script>
+</body>
+</html>

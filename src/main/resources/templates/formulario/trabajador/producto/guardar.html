@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head>
+<body>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 th:text="${titulo}"></h2>
+        </div>
+        <a class="btn btn-danger mb-3" th:href="@{/producto/}">regresar</a>
+
+        <!-- Formulario de Thymeleaf para editar o guardar -->
+        <form id="productoForm" th:action="@{/producto/guardar}" th:object="${producto}" method="post"
+              enctype="multipart/form-data" onsubmit="guardarProducto(event)">
+            <input type="hidden" th:field="*{idProducto}">
+
+            <div class="form-group">
+                <label for="categoria">Categoría:</label>
+                <select class="form-control" id="categoria" th:field="*{categoria.idCategoria}" required>
+                    <option th:each="cat : ${listCategorias}" th:value="${cat.idCategoria}" th:text="${cat.nombre}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="marca">Marca:</label>
+                <select class="form-control" id="marca" th:field="*{marca.idMarca}" required>
+                    <option th:each="mar : ${listMarcas}" th:value="${mar.idMarca}" th:text="${mar.nombre}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <input type="text" class="form-control" id="descripcion" th:field="*{descripcion}" required>
+            </div>
+            <div class="form-group">
+                <label for="imagen">Imagen:</label>
+                <input type="file" class="form-control-file" id="imagen" name="imagen" accept="image/*"
+                       th:required="*{idProducto==null}">
+            </div>
+
+            <div class="form-group">
+                <label for="precio">Precio:</label>
+                <input type="number" class="form-control" id="precio" th:field="*{precio}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock:</label>
+                <input type="number" class="form-control" id="stock" th:field="*{stock}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="visible">Estado:</label>
+                <select class="form-control" id="visible" th:field="*{visible}">
+                    <option value="true" th:text="Activo" ></option>
+                    <option value="false" th:text="Inactivo"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="guardarBtn">Guardar</button>
+        </form>
+    </div>
+
+    <div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+    <!-- Script personalizado -->
+    <script th:inline="javascript">
+        async function guardarProducto(event) {
+            event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            const guardarBtn = document.getElementById('guardarBtn');
+            guardarBtn.disabled = true; // Deshabilitar el botón mientras se procesa
+
+            try {
+                // Obtener los valores del formulario
+                const id = document.querySelector('input[name="idProducto"]').value;
+                const nombre = document.getElementById('nombre').value;
+                const descripcion = document.getElementById('descripcion').value;
+                const imagenInput = document.getElementById('imagen');
+                const imagenFile = imagenInput.files[0]; // Obtener el archivo de imagen seleccionado
+                const nombreImagen = imagenFile ? imagenFile.name : null; // Obtener el nombre del archivo de imagen
+
+
+
+                const precio = parseFloat(document.getElementById('precio').value);
+                const stock = parseInt(document.getElementById('stock').value);
+                const visible = document.getElementById('visible').value === 'true';
+                const categoria = parseInt(document.getElementById('categoria').value); // Asegurar que se obtenga correctamente
+                const marca = parseInt(document.getElementById('marca').value); // Asegurar que se obtenga correctamente
+
+                // Crear un objeto FormData para enviar el formulario
+                const formData = new FormData();
+                formData.append('idProducto', id);
+                formData.append('nombre', nombre);
+                formData.append('descripcion', descripcion);
+
+                if (nombreImagen && imagenFile) {
+                    formData.append('imagen', nombreImagen);
+                    formData.append('imagenB', imagenFile);
+                }
+
+                formData.append('precio', precio);
+
+                formData.append('stock', stock);
+                formData.append('visible', visible);
+                formData.append('categoria.idCategoria', categoria);
+                formData.append('marca.idMarca', marca);
+
+                // Realizar la solicitud AJAX para guardar el producto usando fetch
+                const response = await fetch('/producto/guardar', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud de guardado');
+                }
+
+                // Mostrar mensaje de éxito con SweetAlert2
+                await Swal.fire({
+                    title: "¡Guardado!",
+                    text: "El producto ha sido guardado exitosamente",
+                    icon: "success"
+                });
+
+                // Redirigir o actualizar la página según tu flujo de la aplicación
+                window.location.href = '/producto/';
+
+            } catch (error) {
+                // Mostrar mensaje de error con SweetAlert2
+                Swal.fire({
+                    title: "Error",
+                    text: "Hubo un error al guardar el producto",
+                    icon: "error"
+                });
+                console.error('Error:', error);
+            } finally {
+                guardarBtn.disabled = false; // Habilitar el botón después del proceso
+            }
+        }
+    </script>
+
+</body>
+</html>

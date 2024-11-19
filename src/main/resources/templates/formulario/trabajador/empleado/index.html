@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title" th:text="${titulo}" >Titulo por defecto</h1>
+
+
+            <a class="btn btn-primary mb-3" th:href="@{/empleado/nuevo}">Nuevo</a>
+
+
+            <div th:if="${not #lists.isEmpty(listEmpleado)}">
+                <table class="table datatable  table table-striped table-bordered table-hover table-responsive">
+                    <thead class="table-striped">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">nombre</th>
+                        <th scope="col">apellidos</th>
+                        <th scope="col">correo</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Itera sobre la lista de categorías -->
+                         <tr th:each="empleado : ${listEmpleado}">
+                             <td th:text="${empleado.id}"></td>
+                             <td th:text="${empleado.nombre}"></td>
+                             <td th:text="${empleado.apellido}"></td>
+                             <td th:text="${empleado.correo}"></td>
+
+                             <td>
+                                 <a href="#" class="btn btn-secondary"
+                                    th:attr="data-marca-idMarca=${empleado.id}, data-categoria-nombre=${empleado.nombre}"
+                                    onclick="editar(event)">Editar</a>
+                                 <a href="#" class="btn btn-secondary"
+                                    th:attr="data-marca-idMarca=${empleado.id}, data-categoria-nombre=${empleado.nombre}"
+                                    onclick="eliminarEmpleado(event)">Eliminar</a>
+
+                             </td>
+                         </tr>
+                         </tbody>
+                     </table>
+                 </div>
+
+
+                 <!-- Si la lista de categorías está vacía -->
+            <div th:if="${#lists.isEmpty(listEmpleado)}">
+                <p>No hay Empleados disponibles.</p>
+            </div>
+        </div>
+    </div>
+
+
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+<!-- Script personalizado -->
+<script th:inline="javascript">
+    // Función para editar empleado
+     function editar(event) {
+         var id = event.target.getAttribute('data-marca-idMarca');
+         // Ejemplo de redirección a una URL para editar
+         window.location.href = "/empleado/editar/" + id;
+     }
+
+     // Función para eliminar categoría
+     function eliminarEmpleado(event) {
+         var empleadoId = event.target.getAttribute('data-marca-idMarca');
+
+         // Mostrar confirmación con SweetAlert2
+         Swal.fire({
+             title: "¿Estás seguro?",
+             text: "No podrás revertir esto",
+             icon: "warning",
+             showCancelButton: true,
+             confirmButtonColor: "#3085d6",
+             cancelButtonColor: "#d33",
+             confirmButtonText: "Sí, eliminarlo"
+         }).then((result) => {
+             if (result.isConfirmed) {
+                 // Realizar la solicitud DELETE usando fetch
+                 fetch('/empleado/eliminar?id=' + empleadoId, {
+                     method: 'DELETE',
+                     headers: {
+                         'Content-Type': 'application/json'
+                     }
+                 })
+                     .then(response => {
+                         if (!response.ok) {
+                             throw new Error('Error en la solicitud de eliminación');
+                         }
+                         // Mostrar mensaje de éxito con SweetAlert2
+                         return Swal.fire({
+                             title: "¡Eliminado!",
+                             text: "El empleado ha sido eliminado",
+                             icon: "success"
+                         });
+                     })
+                     .then(() => {
+                         // Redirigir o actualizar la página según tu flujo de la aplicación
+                         window.location.reload(); // Ejemplo: recargar la página
+                     })
+                     .catch(error => {
+                         // Mostrar mensaje de error con SweetAlert2
+                         Swal.fire({
+                             title: "Error",
+                             text: "Hubo un error al eliminar la categoría",
+                             icon: "error"
+                         });
+                     });
+             }
+         });
+     }
+</script>
+</body>
+</html>

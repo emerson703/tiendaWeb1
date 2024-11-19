@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Estilos personalizados */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .main { margin: 20px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        .table { border-radius: 10px; overflow: hidden; background-color: white; }
+        .thead-dark th { background-color: #343a40; color: #ffffff; }
+        footer { background-color: #343a40; color: white; text-align: center; padding: 15px; }
+    </style>
+</head>
+<body>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+
+<main id="main" class="main container">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h1 class="card-title text-center" th:text="${titulo}">Título por defecto</h1>
+            <div th:if="${#lists.isEmpty(listPedido)}" class="alert alert-info" role="alert">
+                No hay pedidos por el momento.
+            </div>
+            <div th:if="${not #lists.isEmpty(listPedido)}" class="table-responsive text-nowrap">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">N° pedido</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Método de pago</th>
+                            <th scope="col">Cantidad de bulto</th>
+                            <th scope="col">Fecha de operación</th>
+                            <th scope="col">Ver detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${listPedido}">
+                        <td th:text="${item.idPedido}"> vacío</td>
+                        <td>
+                            <span th:text="${item.anonimoNombre != null ? item.anonimoNombre : item.cliente.nombre}"></span>
+                        </td>
+                        <td th:text="${item.estado}"> vacío</td>
+                        <td th:text="${item.metodoPago}"> vacío</td>
+                        <td th:text="${item.cantidadP}"> vacío</td>
+                        <td th:text="${item.fechaOperacion}"> vacío</td>
+                        <td>
+                            <button type="button" id="btnAsignar" th:dataid="${item.idPedido}" class="btn btn-outline-primary btnAsignar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAsignacion">
+                                😊
+                            </button>
+
+
+                            <form th:action="@{/empleado/pedidoDetalle}" method="get">
+                                <input type="hidden" name="id" th:value="${item.idPedido}" />
+                                <button class="btn btn-primary btn-sm" type="submit">Ver detalle</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/empleado/asignar}" method="get">
+                        <div class="mb-3">
+                            <label for="listaDesplegable" class="form-label">Seleccionar opción</label>
+                            <!-- Input para mostrar el datoid -->
+                            <input type="text" id="modalInput" name="id" class="form-control" readonly />
+                            <!-- Lista desplegable -->
+                            <select name="idre" id="listaDesplegable" class="form-select" required>
+                                <option th:each="item : ${listRepartidor}"
+                                        th:value="${item.id}"
+                                        th:text="${item.nombre}">
+                                    Opción predeterminada
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+<!-- Scripts -->
+<script>
+const table = document.querySelector(".table");
+table.addEventListener('click', function(event) {
+        // Verifica si el clic fue en un botón con la clase .btn-outline-primary
+        if (event.target && event.target.classList.contains('btnAsignar')) {
+            const button = document.querySelector('#btnAsignar');
+            const dataId = event.target.getAttribute('dataid');
+            console.log("ID recibido:", dataId);
+            const inputModal = document.getElementById("modalInput");
+            inputModal.value = dataId; // Asigna el ID al campo del modal
+        }
+    });
+    $("#btnAsignar").click(function(){
+    modar();
+    })
+    function modar() {
+    const button = document.querySelector('#btnAsignar');
+    const dataId = button.getAttribute('dataid');
+    console.log("ID recibido:", dataId);
+    const inputModal = document.getElementById("modalInput");
+    inputModal.value = dataId; // Asigna el ID al campo del modal
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cliente - Historial de Pedidos</title>
+    <!-- Carga diferida de CSS para mejorar la carga inicial -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+
+    <!-- Separa el CSS personalizado en un archivo externo -->
+    <link th:href="@{/assets/css/custom-style.css}" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #007bff;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #ffffff;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .main-content {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div th:fragment="sidebar" class="d-flex">
+    <div class="sidebar">
+        <h4 class="text-white">CLIENTE</h4>
+
+
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cliente/perfil}" aria-label="Mi Perfil"><i class="fas fa-user"></i> Mi Perfil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active"th:href="@{/cliente/historialPedido}" aria-current="page"><i class="fas fa-history"></i> Historial de Pedidos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"th:href="@{/cliente/productos}"><i class="fas fa-shopping-cart"></i> Nuevo Pedido</a>
+            </li>
+            <li class="nav-item">
+
+                <form th:action="@{/cliente/logout}"  method="get" >
+                    <button class="nav-link"   >  <i class="fas fa-sign-out-alt"></i>Cerrar session</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" role="alert">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+</div>
+
+<!-- Fragmento de recursos JS -->
+<div th:fragment="recursoJS">
+    <!-- Vendor JS Files - async para mejorar rendimiento -->
+    <script async src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script async src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <!-- Scripts adicionales, cargados cuando se necesitan -->
+    <script th:src="@{/assets/vendor/apexcharts/apexcharts.min.js}" defer></script>
+    <script th:src="@{/assets/vendor/chart.js/chart.umd.js}" defer></script>
+    <script th:src="@{/assets/vendor/echarts/echarts.min.js}" defer></script>
+    <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}" defer></script>
+
+    <!-- SweetAlert2 JS -->
+    <script async src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Template Main JS File -->
+    <script th:src="@{/assets/js/main.js}" defer></script>
+</div>
+
+</body>
+</html>

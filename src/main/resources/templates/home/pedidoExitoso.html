@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head"></head>
+<body>
+<div th:replace="plantillas/headerHome :: navbar"></div>
+<div class="container mt-4">
+
+    <h1>¡Tu pedido ha sido registrado con éxito!</h1>
+    <p>El número de tu pedido es: <span th:text="${numeroPedido}"></span></p>
+
+
+</div>
+</body>
+</html>

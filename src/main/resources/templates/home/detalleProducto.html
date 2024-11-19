@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head"></head>
+<body>
+<div th:replace="plantillas/headerHome ::  navbar"></div>
+
+
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <!-- Columna para la tarjeta de producto -->
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm"    >
+
+                <!-- Imagen del producto -->
+                <img th:src="@{'/producto/' + ${producto.imagen}}"
+                     class="card-img-top"
+                     alt="Imagen del producto"
+                     style="height: 400px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px;" />
+
+                <!-- Cuerpo de la tarjeta -->
+                <div class="card-body">
+                    <!-- Título del producto con tamaño y peso de fuente mejorados -->
+                    <h4 class="card-title font-weight-bold" th:text="${producto.nombre}"
+                        style="font-size: 1.5rem; color: #333;">Nombre del producto</h4>
+
+                    <!-- Descripción del producto -->
+                    <p class="card-text text-muted" th:text="${producto.descripcion}"
+                       style="font-size: 1rem;">Descripción del producto</p>
+
+                    <!-- Precio destacado -->
+                    <p class="card-text" style="font-size: 1.25rem; color: #2c3e50;">
+                        <strong>Precio:</strong>
+                        <span th:text="${producto.precio}" style="color: #e74c3c; font-weight: bold;">Precio del producto</span>
+                    </p>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between">
+                        <a href="#" class="btn btn-outline-success"
+                           th:attr="data-producto-idProducto=${producto.idProducto}"
+                           onclick="agregarCarrito(event)">Agregar al carrito</a>
+
+                        <a href="/home" class="btn btn-outline-primary">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="plantillas/headerHome ::  recursoJs"></div>
+<div th:replace="plantillas/headerHome ::  metodosJS"></div>
+
+</body>
+</html>

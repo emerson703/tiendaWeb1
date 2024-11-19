@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:fragment="head">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<div th:fragment="navbar" >
+
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">Backus</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" >
+                        <a class="nav-link" aria-current="page" href="/">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/portal">Portal Trabajador</a>
+
+                    <li class="nav-item">
+                        <a th:href="@{/repartidor/logueo}" class="nav-link" aria-current="page"> Portal Repartidor
+
+                        </a>
+                    </li>
+                </ul>
+
+                <form class="d-flex align-items-center">
+                    <a th:href="@{/detalleCarrito}" class="btn btn-success d-flex align-items-center me-3">
+                        <i class="bi bi-cart me-1"></i> <!-- Icono de carrito -->
+                        <span id="cantidadTotal" class="fw-bold">0</span>
+                    </a>
+                </form>
+
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                    Registrarse / Iniciar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link  " id="register-tab" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Registro</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active " id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Iniciar Sesión</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade  " id="register" role="tabpanel" aria-labelledby="register-tab">
+                            <form action="#" th:action="@{/cliente/agregar}" method="post">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="clave" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="clave" name="clave" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono con código de país</label>
+                                    <input type="text" class="form-control" id="telefono" name="telefono" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Registrarse</button>
+                            </form>
+
+                        </div>
+
+
+                        <div class="tab-pane fade show active  "  id="login" role="tabpanel" aria-labelledby="login-tab">
+                            <form action="#" th:action="@{/cliente/loginX}" method="post">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="clave" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su clave" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Aquí puedes agregar la lógica de envío para cada formulario
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Lógica para registrar usuario
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Lógica para iniciar sesión
+        });
+
+        document.getElementById('forgotForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Lógica para recuperar contraseña
+        });
+
+        document.getElementById('anonymousForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Lógica para enviar mensaje anónimo
+        });
+    </script>
+
+
+    <div th:fragment="recursoJs">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+                integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"
+                integrity="sha384-ZlE2Z7M5hXonjM2kSf8kzD4ah0h4F1I5+9vxCk+NThYAWyMfsor4JMNo8+oN8kD/"
+                crossorigin="anonymous"></script>
+
+    </div>
+    <div th:fragment="metodosJS">
+        <script th:inline="javascript">
+            // Función para ver detalle de un producto
+            function verDetalle(event) {
+                var id = event.target.getAttribute('data-producto-idProducto');
+                window.location.href = "/home/verProducto/" + id;
+            }
+
+            // Función para agregar producto al carrito
+            function agregarCarrito(event) {
+                var id = event.target.getAttribute('data-producto-idProducto');
+
+                fetch('/carrito/agregar/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la solicitud de agregar al carrito');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            title: "¡Agregado al carrito!",
+                            text: data,
+                            icon: "success"
+                        });
+                        actualizarCantidadProductos(); // Actualizar la cantidad total de productos en el carrito
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: "Error",
+                            text: "Hubo un error al agregar el producto al carrito",
+                            icon: "error"
+                        });
+                    });
+            }
+
+            // Función para obtener la cantidad total de productos en el carrito
+            function actualizarCantidadProductos() {
+                fetch('/carrito/cantidad')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al obtener la cantidad de productos en el carrito');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        var cantidadTotal = data;
+                        var spanCantidad = document.getElementById('cantidadTotal');
+                        if (spanCantidad) {
+                            spanCantidad.textContent = cantidadTotal;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener la cantidad de productos en el carrito:', error);
+                    });
+            }
+
+            // Llamar a la función al cargar la página
+            $(document).ready(function () {
+                actualizarCantidadProductos(); // Obtener y mostrar la cantidad total al cargar la página
+            });
+
+
+            function disminuirCantidad(id) {
+                // Realizar la solicitud POST usando fetch
+                fetch('/carrito/disminuir/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al disminuir la cantidad del producto en el carrito');
+                        }
+                        // Actualizar la interfaz o recargar la página para reflejar los cambios
+                        location.reload(); // Recargar la página para mostrar la nueva cantidad
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Manejar el error adecuadamente, mostrar un mensaje al usuario, etc.
+                    });
+            }
+
+            function aumentarCantidad(id) {
+                // Realizar la solicitud POST usando fetch
+                fetch('/carrito/aumentar/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al aumentar la cantidad del producto en el carrito');
+                        }
+                        // Actualizar la interfaz o recargar la página para reflejar los cambios
+                        location.reload(); // Recargar la página para mostrar la nueva cantidad
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Manejar el error adecuadamente, mostrar un mensaje al usuario, etc.
+                    });
+            }
+
+            function retirarProducto(id) {
+                // Realizar la solicitud POST usando fetch
+                fetch('/carrito/retirar/' + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al retirar el producto del carrito');
+                        }
+                        // Actualizar la interfaz o recargar la página para reflejar los cambios
+                        location.reload(); // Recargar la página para actualizar el carrito
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Manejar el error adecuadamente, mostrar un mensaje al usuario, etc.
+                    });
+            }
+
+            function vaciarCarrito() {
+                // Realizar la solicitud POST usando fetch
+                fetch('/carrito/vaciar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al vaciar el carrito');
+                        }
+                        // Actualizar la interfaz o recargar la página para reflejar los cambios
+                        location.reload(); // Recargar la página para mostrar el carrito vacío
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Manejar el error adecuadamente, mostrar un mensaje al usuario, etc.
+                    });
+            }
+
+
+        </script>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #eef2f3; /* Color de fondo suave */
+            font-family: 'Arial', sans-serif;
+        }
+
+        .main {
+            margin: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .card-header {
+            background-color: #007bff; /* Color del encabezado */
+            color: white; /* Texto blanco */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .table {
+            background-color: white; /* Fondo blanco para la tabla */
+            border-radius: 8px; /* Bordes redondeados */
+            overflow: hidden; /* Oculta bordes de la tabla */
+        }
+
+        .thead-dark th {
+            background-color: #343a40; /* Color del encabezado de la tabla */
+            color: #ffffff; /* Texto blanco */
+        }
+
+        .btn-custom {
+            width: 100%;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .alert {
+            margin-top: 20px; /* Espacio superior para la alerta */
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #007bff; /* Color del título de la sección */
+        }
+
+        footer {
+            background-color: #343a40; /* Color del pie de página */
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 0 0 8px 8px; /* Bordes redondeados en la parte inferior */
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+
+<main id="main" class="main container">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h2 class="card-title text-center" th:text="${titulo}">Detalle del Pedido</h2>
+        </div>
+        <div class="card-body">
+            <a class="btn btn-danger mb-3" th:href="@{/empleado/pedidosPendientes}">
+                Ver pedidos pendientes
+            </a>
+            <div th:if="${not #lists.isEmpty(pedido)}" class="row mb-4">
+                <div th:each="item : ${pedido}" class="col-md-6 col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Cliente: <span th:text="${item.anonimoNombre != null ? item.anonimoNombre : item.cliente.nombre}"></span></h5>
+
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Fecha de operación:</strong> <span th:text="${item.fechaOperacion}"></span></p>
+                            <p><strong>Método de pago:</strong> <span th:text="${item.metodoPago}"></span></p>
+                            <p><strong>Estado:</strong> <span th:text="${item.estado}" class="badge bg-warning"></span></p>
+                            <p><strong>Cantidad:</strong> <span th:text="${item.cantidadP}"></span></p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <form th:action="@{/empleado/entregarPedido}" method="post">
+                                <input type="hidden" name="id" th:value="${item.idPedido}" />
+                                <button class="btn btn-primary btn-custom" type="submit">Entregar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${not #lists.isEmpty(listPedidoDetalle)}">
+                <div class="section-title">Detalles de los Productos</div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Precio Unitario</th>
+                            <th scope="col">Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${listPedidoDetalle}">
+                            <td th:text="${item.producto.getNombre()}"></td>
+                            <td th:text="${item.cantidad}"></td>
+                            <td th:text="${item.precio}"></td>
+                            <td th:text="${item.subtotal}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(listPedidoDetalle)}">
+                <div class="alert alert-info" role="alert">
+                    No hay detalles de productos para este pedido.
+                </div>
+            </div>
+        </div>
+    </div>
+</main><!-- End #main -->
+
+
+
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+<!-- Bootstrap JS y jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

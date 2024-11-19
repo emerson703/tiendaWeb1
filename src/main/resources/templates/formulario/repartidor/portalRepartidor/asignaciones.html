@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerRepartidor :: head"></head></head>
+<div th:replace="plantillas/headerRepartidor :: sidebar"></div>
+<main id="main" class="main">
+
+  <h1>Bienvenido - Usted es Repartidor</h1>
+  <div class="card-body">
+    <h1 class="card-title text-center" th:text="${titulo}">Título por defecto</h1>
+    <div th:if="${#lists.isEmpty(listaPedido)}" class="alert alert-info" role="alert">
+      No hay pedidos por el momento.
+    </div>
+    <div th:if="${not #lists.isEmpty(listaPedido)}" class="table-responsive text-nowrap">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+          <th scope="col">N° pedido</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Método de pago</th>
+          <th scope="col">Cantidad de bulto</th>
+          <th scope="col">Fecha de operación</th>
+          <th scope="col">Ver detalle</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${listaPedido}">
+          <td th:text="${item.idPedido}"> vacío</td>
+          <td>
+            <span th:text="${item.anonimoNombre != null ? item.anonimoNombre : item.cliente.nombre}"></span>
+          </td>
+          <td th:text="${item.estado}"> vacío</td>
+          <td th:text="${item.metodoPago}"> vacío</td>
+          <td th:text="${item.cantidadP}"> vacío</td>
+          <td th:text="${item.fechaOperacion}"> vacío</td>
+          <td>
+
+
+
+            <form th:action="@{/repartidor/realizarEntrega}" method="post">
+              <input type="hidden" name="id" th:value="${item.idPedido}" />
+              <button class="btn btn-primary btn-custom" type="submit">Entregarr</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+</main><!-- End #main -->
+
+<div th:replace="plantillas/headerRepartidor :: recursoJS"></div>
+
+
+</body>
+</html>

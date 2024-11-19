@@ -1,0 +1,67 @@
+<!-- src/main/resources/templates/cliente/historial.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div th:replace="plantillas/headerCliente :: sidebar"></div>
+<div class="container mt-4">
+  <div class="container-fluid mt-4">
+    <h3 th:text="${titulo}">Detalle del Carrito</h3>
+    <button type="button" class="btn btn-danger float-end" onclick="vaciarCarrito()">
+      Vaciar Carrito
+    </button>
+  </div>
+
+  <div th:if="${productos != null && not #lists.isEmpty(productos)}">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID Producto</th>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio Unitario</th>
+        <th>Subtotal</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="producto : ${productos}">
+        <td th:text="${producto.idProducto}"></td>
+        <td th:text="${producto.nombre}"></td>
+        <td th:text="${producto.cantidad}"></td>
+        <td th:text="${producto.precioUnitario}"></td>
+        <td th:text="${producto.precioTotal}"></td>
+        <td>
+          <button type="button" class="btn btn-sm btn-secondary"
+                  th:onclick="'disminuirCantidad(' + ${producto.idProducto} + ')'">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary"
+                  th:onclick="'aumentarCantidad(' + ${producto.idProducto} + ')'">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-danger"
+                  th:onclick="'retirarProducto(' + ${producto.idProducto} + ')'">
+            <i class="fas fa-trash"></i> Retirar
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <p>Cantidad total de productos: <span th:text="${cantidadTotal}"></span></p>
+    <p>Sumatoria total: <span th:text="${sumatoriaTotal}"></span></p>
+
+    <a class="btn btn-primary" href="#" onclick="verificarSesion()">Procesar</a>
+    <a href="/home" class="btn btn-danger">Volver</a>
+  </div>
+</div>
+</div>
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+
+</body>
+</html>

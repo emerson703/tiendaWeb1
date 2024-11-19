@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Estilos personalizados */
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+
+        .message-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        .message-card h3 {
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .btn-custom {
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="plantillas/headerHome :: navbar"></div>
+<div class="container">
+    <div class="card message-card">
+        <div class="card-body">
+            <h3 th:text="${mensaje}">mensaje por defecto</h3>
+            <div class="text-muted">
+                <p>Si necesitas ayuda adicional, no dudes en ponerte en contacto con nosotros.</p>
+            </div>
+            <a class="btn btn-primary btn-custom" th:href="@{/}">Regresar al inicio</a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS y jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

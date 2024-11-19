@@ -1,0 +1,59 @@
+<!-- src/main/resources/templates/cliente/editarPerfil.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="plantillas/headerCliente :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-content w-100">
+        <div class="container mt-4">
+            <!-- Título principal -->
+            <h1 class="mb-4 text-primary">Editar Perfil</h1>
+
+            <!-- Formulario para editar el perfil -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <form th:action="@{/cliente/editarPerfil}" method="post" th:object="${cliente}">
+                        <div class="form-group">
+                            <input type="hidden" th:field="*{idCliente}" />
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" class="form-control" th:field="*{nombre}" required/>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" class="form-control" th:field="*{email}" disabled/>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" id="telefono" class="form-control" th:field="*{telefono}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="clave">Clave</label>
+                            <input type="text" id="clave" class="form-control" th:field="*{clave}" required/>
+                        </div>
+                        <div class="text-right mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <a th:href="@{/cliente/perfil}" class="btn btn-secondary ml-2">Cancelar</a>
+                        </div>
+                    </form>
+
+                    <!-- Mensaje de confirmación -->
+                    <div th:if="${mensaje}" class="alert alert-success mt-3" role="alert">
+                        <span th:text="${mensaje}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+
+</body>
+</html>

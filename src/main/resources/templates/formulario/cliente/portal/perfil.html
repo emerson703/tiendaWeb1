@@ -1,0 +1,49 @@
+<!-- src/main/resources/templates/cliente/perfil.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="plantillas/headerCliente :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-content w-100">
+        <div class="container mt-4">
+            <h1 class="mb-4 text-primary">Perfil del Cliente</h1>
+
+            <!-- Card del perfil del cliente -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
+                            <h4 class="font-weight-bold">Información del Cliente</h4>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><i class="fas fa-user text-primary"></i> <strong>Nombre:</strong> <span th:text="${cliente.nombre}"> </span></p>
+                                    <p class="mb-2"><i class="fas fa-envelope text-primary"></i> <strong>Email:</strong> <span th:text="${cliente.email}"></span></p>
+                                    <p class="mb-2"><i class="fas fa-phone text-primary"></i> <strong>Teléfono:</strong> <span th:text="${cliente.telefono}"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><i class="fas fa-lock text-primary"></i> <strong>Clave:</strong> ******</p>
+                                </div>
+                            </div>
+                            <!-- Botón para editar perfil -->
+                            <div class="text-right mt-4">
+                                <a th:href="@{/cliente/editarPerfil}" class="btn btn-primary">
+                                    <i class="fas fa-edit"></i> Editar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+</body>
+</html>

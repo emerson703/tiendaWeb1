@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-GestionProyectoFarmaciaApplication<alberto>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.alberto.proyecto.GestionProyectoFarmaciaApplication",
+            "projectName": "alberto",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

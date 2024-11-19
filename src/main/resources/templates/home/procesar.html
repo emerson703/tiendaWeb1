@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Estilos personalizados */
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h5.card-title {
+            font-weight: 700;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-group p {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .btn-custom {
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .info-card {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-left: 15px;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #e9ecef !important;
+        }
+
+        .text-end {
+            text-align: end !important;
+        }
+
+        .modal-body p span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="plantillas/headerHome :: navbar"></div>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Resumen del Carrito y Método de Pago -->
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Resumen del Carrito</h5>
+                    <div id="resumenCarrito">
+                        <!-- Los productos se agregarán aquí dinámicamente -->
+                    </div>
+                    <form id="marcaForm" method="post" th:action="@{/procesarCarrito}">
+                        <div class="form-group mt-3">
+                            <label for="metodoPago">Método de Pago:</label>
+                            <select id="metodoPago" name="metodoPago" class="form-control" required>
+                                <option value="" disabled selected>Seleccione un método de pago</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="yape">Yape</option>
+                                <option value="transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn btn-primary btn-custom" id="procesarBtn">Procesar Compra</button>
+                            <a class="btn btn-danger btn-custom" th:href="@{/}">Regresar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos del Cliente -->
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <div id="clienteInfo">
+                        <!-- Los datos del cliente se agregarán aquí dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS y jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        obtenerDatosCliente();
+        obtenerResumenCarrito();
+    });
+
+    // Función para obtener y mostrar los datos del cliente
+    async function obtenerDatosCliente() {
+        try {
+            const response = await fetch('/session/datosSesion');
+
+            // Verificar si la respuesta fue exitosa
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const clienteHTML = `
+            <div class="cliente-info">
+                <h2>Información del Cliente</h2>
+                <div class="form-group border-bottom pb-2">
+                    <label for="nombre">Nombre:</label>
+                    <p id="nombre">${data.nombre || 'N/A'}</p>
+                </div>
+                <div class="form-group border-bottom pb-2">
+                    <label for="email">Email:</label>
+                    <p id="email">${data.email || 'N/A'}</p>
+                </div>
+                <div class="form-group border-bottom pb-2">
+                    <label for="telefono">Teléfono:</label>
+                    <p id="telefono">${data.telefono || 'N/A'}</p>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted">En caso de no ser el usuario, cerrar sesión.</p>
+                    <button class="btn btn-danger btn-custom" id="cerrarSesionBtn">Cerrar Sesión</button>
+                </div>
+            </div> `;
+            // Actualizar el contenido del div donde se mostrarán los datos del cliente
+            const divClienteInfo = document.getElementById('clienteInfo');
+            divClienteInfo.innerHTML = clienteHTML;
+
+            // Asignar evento al botón de cerrar sesión
+            document.getElementById('cerrarSesionBtn').addEventListener('click', async function () {
+                try {
+                    const response = await fetch('/session/cerrarSesion', { method: 'DELETE' });
+                    if (response.ok) {
+                        window.location.href = '/';
+                    } else {
+                        throw new Error('Error al cerrar sesión');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        } catch (error) {
+            console.error('Error al cargar datos:', error);
+            mostrarMensajeError();
+        }
+    }
+
+    function mostrarMensajeError() {
+        // Mensaje de error en caso de fallo al cargar los datos
+        document.getElementById('nombre').textContent = 'Error al cargar datos';
+        document.getElementById('email').textContent = 'Error al cargar datos';
+        document.getElementById('telefono').textContent = 'Error al cargar datos';
+    }
+
+    // Función para obtener el resumen del carrito
+    async function obtenerResumenCarrito() {
+        try {
+            const response = await fetch('/carrito/resumenCarrito');
+            const productos = await response.json();
+            const resumenHTML = productos.map(producto => `
+                <div class="card mb-3">
+                    <div class="card-body d-flex justify-content-between">
+                        <div class="producto-info">
+                            <h6 class="mb-1">${producto.nombre}</h6>
+                            <p class="mb-0 text-muted">Cantidad: ${producto.cantidad}</p>
+                            <p class="mb-0 text-muted">Total: S/ ${producto.precioTotal.toFixed(2)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('resumenCarrito').innerHTML = resumenHTML;
+        } catch (error) {
+            console.error('Error al obtener el resumen del carrito:', error);
+        }
+    }
+
+    // Evento para enviar la compra con el método de pago
+    document.getElementById('marcaForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Evitar que el formulario se envíe de forma predeterminada
+
+        const metodoPago = document.getElementById('metodoPago').value;
+
+        // Verificar que se haya seleccionado un método de pago
+        if (!metodoPago) {
+            await Swal.fire({
+                title: 'Advertencia!',
+                text: 'Por favor, seleccione un método de pago.',
+                icon: 'warning',
+            });
+            return;
+        }
+
+        // Procesar la compra
+        const response = await fetch(this.action, {
+            method: this.method,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(new FormData(this)).toString()
+        });
+
+        if (response.ok) {
+            await Swal.fire({
+                title: 'Compra Exitosa!',
+                text: 'Gracias por su compra.',
+                icon: 'success',
+            });
+            window.location.href = '/';
+
+        } else {
+            await Swal.fire({
+                title: 'Error!',
+                text: 'Hubo un problema al procesar la compra.',
+                icon: 'error',
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

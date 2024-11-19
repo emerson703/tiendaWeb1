@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+
+   <h1>Bienvenido, <span th:text="${empleado.nombre} +' ' + ${empleado.apellido}">Nombre del empleado</span>!</h1>
+   <p>Correo: <span th:text="${empleado.correo}+${empleado.rol}">Correo del empleado</span></p>
+
+
+</main><!-- End #main -->
+
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+
+</body>
+</html>

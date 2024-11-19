@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerHome :: head"></head>
+<body>
+
+<div th:replace="plantillas/headerHome :: navbar"></div>
+
+<div class="container mt-4">
+    <div class="container-fluid mt-4">
+        <h3 th:text="${titulo}">Detalle del Carrito</h3>
+        <button type="button" class="btn btn-danger float-end" onclick="vaciarCarrito()">
+            Vaciar Carrito
+        </button>
+    </div>
+
+    <div th:if="${productos != null && not #lists.isEmpty(productos)}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="producto : ${productos}">
+                <td th:text="${producto.idProducto}"></td>
+                <td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.cantidad}"></td>
+                <td th:text="${producto.precioUnitario}"></td>
+                <td th:text="${producto.precioTotal}"></td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-secondary"
+                            th:onclick="'disminuirCantidad(' + ${producto.idProducto} + ')'">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary"
+                            th:onclick="'aumentarCantidad(' + ${producto.idProducto} + ')'">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger"
+                            th:onclick="'retirarProducto(' + ${producto.idProducto} + ')'">
+                        <i class="fas fa-trash"></i> Retirar
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p>Cantidad total de productos: <span th:text="${cantidadTotal}"></span></p>
+        <p>Sumatoria total: <span th:text="${sumatoriaTotal}"></span></p>
+
+        <a class="btn btn-primary" href="#" onclick="verificarSesion()">Procesar</a>
+        <a href="/home" class="btn btn-danger">Volver</a>
+    </div>
+</div>
+
+<!-- Modal de Inicio de Sesión -->
+<div class="modal fade" id="userModalX" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Acceso al Sistema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register1" role="tab"
+                           aria-controls="register" aria-selected="false">Sin Cuenta</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login2" role="tab"
+                           aria-controls="login" aria-selected="true">Con cuenta</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <!-- Sección de Registro -->
+                    <div class="tab-pane fade" id="register1" role="tabpanel" aria-labelledby="register-tab">
+                        <form id="AnonimoForm">
+                            <div class="form-group">
+                                <label for="emailF">Correo electrónico</label>
+                                <input type="email" class="form-control" id="emailF" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="telefonoF">Telefono</label>
+                                <input type="text" class="form-control" id="telefonoF" name="telefono" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nombreF">Nombre</label>
+                                <input type="text" class="form-control" id="nombreF" name="nombre" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-2">Siguiente</button>
+                        </form>
+                    </div>
+
+                    <!-- Sección de Inicio de Sesión -->
+                    <div class="tab-pane fade show active" id="login2" role="tabpanel" aria-labelledby="login-tab">
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="loginCorreo">Correo electrónico</label>
+                                <input type="email" class="form-control" id="loginCorreo" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Contraseña</label>
+                                <input type="password" class="form-control" id="loginPassword" name="clave" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Iniciar sesión</button>
+                        </form>
+                        <div id="loginError" style="display: none; color: red;">Usuario o contraseña incorrectos.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Removido para evitar la verificación al cargar
+    });
+
+    function verificarSesion() {
+        fetch('/session/verificarSesion')
+            .then(response => response.json())
+            .then(data => {
+                if (data.sesionActiva) {
+                    window.location.href = '/procesar';
+                } else {
+                    // Aquí se asegura de que el modal se muestre correctamente
+                    var modal = new bootstrap.Modal(document.getElementById('userModalX'));
+                    modal.show();
+                }
+            })
+            .catch(error => {
+                console.error('Error verificando la sesión:', error);
+            });
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const email = document.getElementById('loginCorreo').value; // Cambiado a 'loginCorreo'
+        const clave = document.getElementById('loginPassword').value; // Cambiado a 'loginPassword'
+
+        fetch('/cliente/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, clave})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/procesar';
+                } else {
+                    document.getElementById('loginError').textContent = "Usuario o contraseña incorrectos.";
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error durante el inicio de sesión:', error);
+            });
+    });
+    document.getElementById('AnonimoForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const email = document.getElementById('emailF').value; // Cambiado a 'loginCorreo'
+        const nombre = document.getElementById('nombreF').value; // Cambiado a 'loginCorreo'
+        const telefono = document.getElementById('telefonoF').value; // Cambiado a 'loginCorreo'
+
+        fetch('/cliente/anonimo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, nombre, telefono})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/procesar';
+                } else {
+                    document.getElementById('loginError').textContent = "Usuario o contraseña incorrectos.";
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error durante el inicio de sesión:', error);
+            });
+    });
+
+
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const email = document.getElementById('registroCorreo').value; // ID correcto
+        const telefono = document.getElementById('telefono') ? document.getElementById('telefono').value : ""; // Si necesitas este campo, asegúrate de agregarlo en el formulario de registro
+        const nombre = document.getElementById('nombre') ? document.getElementById('nombre').value : ""; // Si necesitas este campo, asegúrate de agregarlo en el formulario de registro
+
+        fetch('/cliente/registrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, telefono, nombre})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Registro exitoso');
+                    window.location.href = '/procesar';
+                } else {
+                    console.error('Error durante el registro:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error durante el registro:', error);
+            });
+    });
+</script>
+
+<!-- Scripts al final del body -->
+<script th:src="@{/js/metodosCarrito.js}"></script>
+<script th:src="@{/js/modalSesion.js}"></script>
+
+</body>
+</html>

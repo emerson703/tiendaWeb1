@@ -1,0 +1,86 @@
+<!-- src/main/resources/templates/cliente/historial.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="plantillas/headerCliente :: sidebar"></div>
+
+    <!-- Main Content -->
+    <div class="main-content w-100">
+        <div class="container mt-4">
+
+            <!-- Tarjeta del historial de pedidos -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <h4 class="font-weight-bold">Historial de Pedidos</h4>
+
+                    <!-- Leyenda -->
+                    <div class="mt-4 mb-4 p-3 border rounded bg-light">
+                        <h5 class="font-weight-bold">Leyenda</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-clock text-warning mr-2" style="font-size: 1.5rem;"></i>
+                            <span>Pendiente</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-check-circle text-success mr-2" style="font-size: 1.5rem;"></i>
+                            <span>Entregado</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-times-circle text-danger mr-2" style="font-size: 1.5rem;"></i>
+                            <span>Cancelado</span>
+                        </div>
+                    </div>
+
+                    <div th:each="item : ${pedidos}">  <!-- Pedido  -->
+                        <div class="card mb-3 border">
+                            <div class="card-header bg-light">
+                                <h5 class="card-title" th:text="${'Pedido #' + item.getIdPedido()}">Pedido #1</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="pedido-info d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="mb-1" th:text="${'Fecha de operación: ' + item.getFechaOperacion()}"></p>
+                                        <p class="mb-1" th:text="${'Método de pago: ' + item.getMetodoPago()}"></p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span th:class="${item.getEstado() == 'PENDIENTE' ? 'badge badge-warning' : (item.getEstado() == 'ENTREGADO' ? 'badge badge-success' : (item.getEstado() == 'CANCELADO' ? 'badge badge-danger' : 'badge'))}"
+                                              th:text="${item.getEstado()}"></span>
+                                        <i th:if="${item.getEstado() == 'PENDIENTE'}" class="fas fa-clock text-warning ml-2"></i>
+                                        <i th:if="${item.getEstado() == 'ENTREGADO'}" class="fas fa-check-circle text-success ml-2"></i>
+                                        <i th:if="${item.getEstado() == 'CANCELADO'}" class="fas fa-times-circle text-danger ml-2"></i>
+                                    </div>
+                                </div>
+                                <a href="/cliente/pedidoDetalle/1" class="btn btn-info btn-sm mt-2">
+                                    <i class="fas fa-eye"></i> Ver Detalles
+                                </a>
+
+                                <!-- Botón de Cancelar solo si el estado es PENDIENTE -->
+                                <a th:if="${item.getEstado() == 'PENDIENTE'}" href="/cliente/cancelarPedido/{item.getIdPedido()}" class="btn btn-danger btn-sm mt-2 ml-2">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+
+                                <td>
+                                    <form th:action="@{/calificacion/nuevo}" method="get">
+                                        <input type="hidden" name="id" th:value="${item.idPedido}" />
+                                        <button class="btn btn-primary" type="submit">calificacion</button>
+                                    </form>
+                                </td>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+
+</body>
+</html>

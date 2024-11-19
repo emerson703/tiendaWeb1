@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title" th:text="${titulo}" >Titulo por defecto</h1>
+            <div th:if="${not #lists.isEmpty(listEntrega)}">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">N°Entrega</th>
+                        <th scope="col">Pedido</th>
+                        <th scope="col">Fecha de entrega</th>
+                        <th scope="col">Empleado</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Itera sobre la lista de categorías -->
+                    <tr th:each="item : ${listEntrega}">
+                        <td th:text="${item.getIdEntrega()}"></td>
+                        <td th:text="${item.pedido.getIdPedido()}"></td>
+                        <td th:text="${item.fechaEntrega}"></td>
+                       <td>
+
+                           <form th:action="@{/empleado/detalleEntrega}" method="get">
+                               <input type="hidden" name="id" th:value="${item.getIdEntrega()}" />
+                               <button class="btn btn-primary" type="submit">Ver </button>
+                           </form>
+                       </td>
+
+                    </tr>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</main><!-- End #main -->
+
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+
+</body>
+</html>

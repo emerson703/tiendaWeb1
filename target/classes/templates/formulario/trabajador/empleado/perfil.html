@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+
+<main id="main" class="main">
+
+    <div class="main-content w-100">
+        <div class="container mt-4">
+            <h1 class="mb-4 text-primary">Perfil del Empleado</h1>
+
+            <!-- Card del perfil del cliente -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-10">
+                            <h4 class="font-weight-bold">Información del empleado</h4>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><i class="fas fa-user text-primary"></i> <strong>Nombre:</strong> <span th:text="${empleado.nombre}"> </span></p>
+                                    <p class="mb-2"><i class="fas fa-phone text-primary"></i> <strong>Apellidos:</strong> <span th:text="${empleado.apellido}"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><i class="fas fa-envelope text-primary"></i> <strong>Correo:</strong> <span th:text="${empleado.correo}"></span></p>
+                                    <p class="mb-2"><i class="fas fa-lock text-primary"></i> <strong>Clave:</strong> ******</p>
+                                </div>
+                            </div>
+                            <!-- Botón para editar perfil -->
+                            <div class="text-right mt-4">
+                                <a th:href="@{/empleado/editarPerfil}" class="btn btn-primary">
+                                    <i class="fas fa-edit"></i> Editar Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+<!-- Script personalizado -->
+
+</body>
+</html>

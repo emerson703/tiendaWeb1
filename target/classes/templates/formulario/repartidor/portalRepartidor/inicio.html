@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerRepartidor :: head"></head></head>
+<div th:replace="plantillas/headerRepartidor :: sidebar"></div>
+<main id="main" class="main">
+
+  <h1>Bienvenido, <span th:text="${repartidor.nombre} +' ' + ${repartidor.apellido}">Nombre del repartidor</span> ! - Usted es Repartidor</h1>
+  <p>Correo: <span th:text="${repartidor.correo}">Correo del repartidor</span></p>
+
+
+</main><!-- End #main -->
+
+<div th:replace="plantillas/headerRepartidor :: recursoJS"></div>
+
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head"></head>
+
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="plantillas/headerCliente :: sidebar"></div>
+    <div class="main-content w-100">
+        <div class="container mt-4">
+
+            <!-- Card del perfil del cliente -->
+            <div class="card shadow-lg border-0 rounded-lg mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <h4>Calificacion</h4>
+                        <div class="col-md-10" >
+                            <form id="calificacionForm" class="mb-4" th:action="@{/calificacion/guardar}" th:object="${calificacion}" method="post" onsubmit="guardarCalificacion(event)">
+
+                                <input type="text" th:field="*{idPedido}" th:value="${idPe}"/>
+                                <input type="text" th:field="*{idCliente}" th:value="${idCli}"/>
+                                <div class="mb-3">
+                                    <label for="calificacion" class="form-label fw-semibold">Calificación:</label>
+                                    <select id="calificacion" th:field="*{calificacion}"  class="form-select form-select-lg" aria-label="Seleccione una calificación" required>
+                                        <option value="" disabled selected>Seleccione una calificación</option>
+                                        <option value="1">⭐ 1 - Muy Malo</option>
+                                        <option value="2">⭐⭐ 2 - Malo</option>
+                                        <option value="3">⭐⭐⭐ 3 - Regular</option>
+                                        <option value="4">⭐⭐⭐⭐ 4 - Bueno</option>
+                                        <option value="5">⭐⭐⭐⭐⭐ 5 - Excelente</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="comentario"  class="form-label">Comentario</label>
+                                    <textarea id="comentario" th:field="*{comentario}"  class="form-control"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Agregar Calificación</button>
+                                <a class="btn btn-danger mb-3" th:href="@{/cliente/historialPedido}">Regresar</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+
+<script th:inline="javascript">
+    async function guardarCalificacion(event) {
+        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+        try {
+            // Obtener los valores del formulario
+            const id = document.querySelector('input[name="id"]').value;
+            const idPedido = document.getElementById('idPedido').value;
+            const idCliente = document.getElementById('idCliente').value;
+            const calificacion = document.getElementById('calificacion').value;
+            const comentario = document.getElementById('comentario').value;
+
+            // Crear un objeto JSON con los datos del formulario
+            const data = {
+                id: id,
+                idPedido: idPedido,
+                idCliente: idCliente,
+                calificacion: calificacion,
+                comentario: comentario
+            };
+
+            // Convertir el objeto JSON a cadena
+            const jsonData = JSON.stringify(data);
+
+            // Realizar la solicitud AJAX para guardar la calificación
+            const response = await fetch('/calificacion/guardar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud de guardado');
+            }
+
+            // Mostrar mensaje de éxito con SweetAlert2
+            Swal.fire({
+                title: "¡Guardado!",
+                text: "La calificación ha sido guardada exitosamente",
+                icon: "success"
+            }).then(() => {
+                // Redirigir o actualizar la página según tu flujo de la aplicación
+                window.location.href = '/calificacion/nuevo';
+            });
+
+        } catch (error) {
+            // Mostrar mensaje de error con SweetAlert2
+            Swal.fire({
+                title: "Error",
+                text: "Hubo un error al guardar la calificación",
+                icon: "error"
+            });
+            console.error('Error:', error);
+        }
+    }
+</script>
+
+</body>
+</html>

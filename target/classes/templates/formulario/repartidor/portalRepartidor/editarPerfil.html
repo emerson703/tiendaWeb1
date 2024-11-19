@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerRepartidor :: head"></head></head>
+<div th:replace="plantillas/headerRepartidor :: sidebar"></div>
+
+<main id="main" class="main">
+
+  <div class="main-content w-100">
+    <div class="container mt-4">
+      <!-- Título principal -->
+
+
+      <!-- Formulario para editar el perfil -->
+      <div class="card shadow-lg border-0 rounded-lg mb-4">
+
+        <div class="card-body p-4">
+          <h4 class="mb-4 text-primary">Editar Perfil del Repartidor</h4>
+          <form th:action="@{/repartidor/editPerfil}" method="post" th:object="${repartidor}">
+            <div class="form-group d-flex align-items-center">
+              <input type="hidden" th:field="*{id}" />
+              <label for="nombre" class="mr-2"><strong>Nombre: </strong></label>
+              <input type="text" id="nombre" class="form-control" th:field="*{nombre}" required/>
+            </div>
+            <div class="form-group d-flex align-items-center">
+              <label for="apellido" class="mr-2"><strong>Apellidos: </strong></label>
+              <input type="text" id="apellido" class="form-control" th:field="*{apellido}" required/>
+            </div>
+            <div class="form-group d-flex align-items-center">
+              <label for="telefono" class="mr-2"><strong>Teléfono: </strong></label>
+              <input type="text" id="telefono" class="form-control" th:field="*{telefono}" required/>
+            </div>
+            <div class="form-group d-flex align-items-center">
+              <label for="vehiculo" class="mr-2"><strong>Vehiculo: </strong></label>
+            <input type="text" id="vehiculo" class="form-control" th:field="*{vehiculo}" required/>
+              </div>
+            <div class="form-group d-flex align-items-center">
+              <label for="placa" class="mr-2"><strong>Placa: </strong></label>
+              <input type="text" id="placa" class="form-control" th:field="*{placa}" required/>
+            </div>
+            <div class="form-group d-flex align-items-center">
+              <label for="estado" class="mr-2"><strong>Estado: </strong></label>
+              <input type="text" id="estado" class="form-control" th:field="*{estado}" required/>
+            </div>
+
+            <div class="form-group d-flex align-items-center">
+              <label for="correo" class="mr-2"><strong>Correo: </strong></label>
+              <input type="email" id="correo" class="form-control" th:field="*{correo}" disabled/>
+            </div>
+
+            <div class="form-group d-flex align-items-center">
+              <label for="clave" class="mr-2"><strong>Clave: </strong></label>
+              <input type="text" id="clave" class="form-control" th:field="*{clave}" required/>
+            </div>
+            <div class="text-right mt-4">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Guardar Cambios
+              </button>
+              <a th:href="@{/repartidor/perfil}" class="btn btn-secondary ml-2">Cancelar</a>
+            </div>
+          </form>
+
+          <!-- Mensaje de confirmación -->
+          <div th:if="${mensaje}" class="alert alert-success mt-3" role="alert">
+            <span th:text="${mensaje}"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</main><!-- End #main -->
+<div th:replace="plantillas/headerRepartidor :: recursoJS"></div>
+<!-- Script personalizado -->
+
+</body>
+</html>
