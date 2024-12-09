@@ -3,8 +3,6 @@
 <head th:replace="plantillas/headerRepartidor :: head"></head></head>
 <div th:replace="plantillas/headerRepartidor :: sidebar"></div>
 <main id="main" class="main">
-
-  <h1>Bienvenido - Usted es Repartidor</h1>
   <div class="card-body">
     <h1 class="card-title text-center" th:text="${titulo}">Título por defecto</h1>
     <div th:if="${#lists.isEmpty(listaPedido)}" class="alert alert-info" role="alert">
@@ -16,11 +14,12 @@
         <tr>
           <th scope="col">N° pedido</th>
           <th scope="col">Cliente</th>
+          <th scope="col">N° Celular</th>
           <th scope="col">Estado</th>
           <th scope="col">Método de pago</th>
           <th scope="col">Cantidad de bulto</th>
           <th scope="col">Fecha de operación</th>
-          <th scope="col">Ver detalle</th>
+          <th scope="col">Ver Detalle</th>
         </tr>
         </thead>
         <tbody>
@@ -29,17 +28,20 @@
           <td>
             <span th:text="${item.anonimoNombre != null ? item.anonimoNombre : item.cliente.nombre}"></span>
           </td>
+          <td th:text="${item.cliente.telefono}"> vacío</td>
           <td th:text="${item.estado}"> vacío</td>
           <td th:text="${item.metodoPago}"> vacío</td>
           <td th:text="${item.cantidadP}"> vacío</td>
           <td th:text="${item.fechaOperacion}"> vacío</td>
           <td>
 
-
+            <a th:href="@{/repartidor/ruta(id=${item.idPedido})}" class="btn btn-info">
+              Ver Ruta
+            </a>
 
             <form th:action="@{/repartidor/realizarEntrega}" method="post">
               <input type="hidden" name="id" th:value="${item.idPedido}" />
-              <button class="btn btn-primary btn-custom" type="submit">Entregarr</button>
+              <button class="btn btn-primary btn-custom" type="submit">Entregar</button>
             </form>
           </td>
         </tr>

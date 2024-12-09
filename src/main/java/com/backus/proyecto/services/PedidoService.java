@@ -5,13 +5,17 @@ import com.backus.proyecto.repository.PedidoRepository;
 import com.backus.proyecto.util.interfaces.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import net.sf.jasperreports.engine.*;
 @Service
 
 public class PedidoService implements CrudService<Pedido> {
     @Autowired
     private PedidoRepository PedidoRepository;
+
     @Override
     public List<Pedido> listar() {
         return  PedidoRepository.findAll();

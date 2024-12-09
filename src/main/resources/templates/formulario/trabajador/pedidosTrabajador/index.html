@@ -18,7 +18,7 @@
 <body>
 <div th:replace="plantillas/headerAdmin :: sidebar"></div>
 
-<main id="main" class="main container">
+<main id="main" class="main">
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h1 class="card-title text-center" th:text="${titulo}">Título por defecto</h1>
@@ -29,11 +29,11 @@
                 <table class="table table-striped">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">N° pedido</th>
+                            <th scope="col">N°</th>
                             <th scope="col">Cliente</th>
                             <th scope="col">Estado</th>
                             <th scope="col">Método de pago</th>
-                            <th scope="col">Cantidad de bulto</th>
+                            <th scope="col">Cantidad bulto</th>
                             <th scope="col">Fecha de operación</th>
                             <th scope="col">Ver detalle</th>
                         </tr>
@@ -49,15 +49,18 @@
                         <td th:text="${item.cantidadP}"> vacío</td>
                         <td th:text="${item.fechaOperacion}"> vacío</td>
                         <td>
-                            <button type="button" id="btnAsignar" th:dataid="${item.idPedido}" class="btn btn-outline-primary btnAsignar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAsignacion">
-                                😊
-                            </button>
-
-
                             <form th:action="@{/empleado/pedidoDetalle}" method="get">
                                 <input type="hidden" name="id" th:value="${item.idPedido}" />
-                                <button class="btn btn-primary btn-sm" type="submit">Ver detalle</button>
+                                <button class="btn btn-primary btn-sm" type="submit">📝Detalles</button>
                             </form>
+                            <button type="button" id="btnAsignar" th:dataid="${item.idPedido}" class="btn btn-outline-primary btnAsignar btn-sm" data-bs-toggle="modal" data-bs-target="#modalAsignacion">
+                                👆 Asignar
+                            </button>
+
+                            <a href="#" class="btn btn-primary"
+                               th:attr="data-marca-idMarca=${item.idPedido}"
+                               onclick="editar(event)">✍Editar
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -76,7 +79,7 @@
                 <div class="modal-body">
                     <form action="#" th:action="@{/empleado/asignar}" method="get">
                         <div class="mb-3">
-                            <label for="listaDesplegable" class="form-label">Seleccionar opción</label>
+                            <label for="listaDesplegable" class="form-label">Seleccione un Repartidor</label>
                             <!-- Input para mostrar el datoid -->
                             <input type="text" id="modalInput" name="id" class="form-control" readonly />
                             <!-- Lista desplegable -->
@@ -119,6 +122,12 @@ table.addEventListener('click', function(event) {
     const inputModal = document.getElementById("modalInput");
     inputModal.value = dataId; // Asigna el ID al campo del modal
 }
+    // Función para editar empleado
+     function editar(event) {
+         var id = event.target.getAttribute('data-marca-idMarca');
+         // Ejemplo de redirección a una URL para editar
+         window.location.href = "/empleado/edit/" + id;
+     }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

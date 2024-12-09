@@ -153,8 +153,24 @@ public class EmpleadoController {
         model.addAttribute("mensaje", "Perfil actualizado exitosamente");
         return "formulario/trabajador/empleado/perfil";
     }
-
-
+    //Editar Pedido
+    @GetMapping("/edit/{id}")
+    public String formularioEditarPedido(@PathVariable("id") Integer id, Model model) {
+        Pedido pedido = pedidoService.buscarPorId(id).orElse(null);
+        if (pedido != null) {
+            model.addAttribute("pedido", pedido);
+            model.addAttribute("titulo", "Modificar Pedido");
+            return "/formulario/trabajador/pedidosTrabajador/editar";
+        } else {
+            model.addAttribute("error", "Pedido no encontrado");
+            return "redirect:/empleado/index";
+        }
+    }
+    @PostMapping("/editarPedido")
+    public ResponseEntity<String> editarPedido(@RequestBody Pedido pedido) {
+        pedidoService.guardar(pedido);
+        return ResponseEntity.ok("Registro grabado exitosamente");
+    }
 
     @GetMapping("/pedidosPendientes")
     public String mostrarPedidosPendientes(Model model, HttpSession session) {
@@ -189,6 +205,7 @@ public class EmpleadoController {
             pedidoRepository.save(pedido);
 
             // Mensaje de éxito
+
             redirectAttributes.addFlashAttribute("mensaje", "Repartidor asignado con éxito.");
         } catch (NoSuchElementException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -225,7 +242,7 @@ public class EmpleadoController {
                     .orElseThrow(() -> new NoSuchElementException("Pedido no encontrado"));
 
             Empleado empleado = obtenerEmpleadoDeSesion(session);
-            Entrega entrega = new Entrega(null, LocalDateTime.now(), empleado, pedido);
+            Entrega entrega = new Entrega(null, LocalDateTime.now(), empleado, pedido, null);
             entregaRepository.save(entrega);
 
             // Cambiar el estado

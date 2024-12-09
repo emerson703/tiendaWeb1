@@ -13,16 +13,16 @@
 
 
             <div th:if="${not #lists.isEmpty(listCalificacion)}">
-                <table class="table datatable  table table-striped table-bordered table-hover table-responsive">
-                    <thead class="table-striped">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
                     <tr>
-                        <th scope="col">Codigo</th>
+                        <th scope="col">ID</th>
                         <th scope="col">valor de la calificacion</th>
                         <th scope="col">Comentario</th>
 
                         <th scope="col">Cliente</th>
 
-                        <th scope="col">Accion</th>
+                        <th scope="col">Fecha de Pedido</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -32,15 +32,9 @@
                         <td th:text="${calificacion.calificacion}"></td>
                         <td th:text="${calificacion.comentario}"></td>
                         <td th:text="${calificacion.cliente.nombre}"></td>
+                        <td th:text="${calificacion.pedido.fechaOperacion}"></td>
 
 
-                        <td>
-
-                            <a href="#" class="btn btn-secondary"
-
-                               onclick="eliminarEmpleado(event)">Eliminar</a>
-
-                        </td>
                     </tr>
                     </tbody>
                 </table>

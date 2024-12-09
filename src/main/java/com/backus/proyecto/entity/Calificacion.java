@@ -7,7 +7,7 @@ public class Calificacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Identificador único de la calificación
+    private Integer id; // Identificador único de la calificación
 
     @ManyToOne
     @JoinColumn(name = "idPedido", nullable = false)
@@ -19,12 +19,11 @@ public class Calificacion {
     private int calificacion; // Puntuación (por ejemplo, de 1 a 5)
     private String comentario; // Texto opcional que el cliente puede agregar
 
-    // Getters y Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -58,16 +57,5 @@ public class Calificacion {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
-    }
-
-    @Override
-    public String toString() {
-        return "Calificacion{" +
-                "id=" + id +
-                ", pedido=" + (pedido != null ? pedido.getIdPedido() : null) + // Acceso al ID del pedido
-                ", cliente=" + (cliente != null ? cliente.getIdCliente() : null) + // Acceso al ID del cliente
-                ", calificacion=" + calificacion +
-                ", comentario='" + comentario + '\'' +
-                '}';
     }
 }

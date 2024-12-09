@@ -12,16 +12,26 @@
             <!-- Card del perfil del cliente -->
             <div class="card shadow-lg border-0 rounded-lg mb-4">
                 <div class="card-body p-4">
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <p th:text="${error}"></p>
+                    </div>
+                    <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                        <p th:text="${mensaje}"></p>
+                    </div>
                     <div class="row align-items-center">
-                        <h4>Calificacion</h4>
+                        <h4>Calificación</h4>
                         <div class="col-md-10" >
-                            <form id="calificacionForm" class="mb-4" th:action="@{/calificacion/guardar}" th:object="${calificacion}" method="post" onsubmit="guardarCalificacion(event)">
+                            <form id="calificacionForm" class="mb-4" th:action="@{/calificacion/guardar}" method="post">
+                                <!-- ID del Pedido -->
+                                <input type="hidden" name="idPedido" th:value="${idPe}" id="idPedido" />
 
-                                <input type="text" th:field="*{idPedido}" th:value="${idPe}"/>
-                                <input type="text" th:field="*{idCliente}" th:value="${idCli}"/>
+                                <!-- ID del Cliente -->
+                                <input type="hidden" name="idCliente" th:value="${idCli}" id="idCliente" />
+
+                                <!-- Calificación -->
                                 <div class="mb-3">
                                     <label for="calificacion" class="form-label fw-semibold">Calificación:</label>
-                                    <select id="calificacion" th:field="*{calificacion}"  class="form-select form-select-lg" aria-label="Seleccione una calificación" required>
+                                    <select id="calificacion" name="calificacion" class="form-select form-select-lg" aria-label="Seleccione una calificación" required>
                                         <option value="" disabled selected>Seleccione una calificación</option>
                                         <option value="1">⭐ 1 - Muy Malo</option>
                                         <option value="2">⭐⭐ 2 - Malo</option>
@@ -31,13 +41,16 @@
                                     </select>
                                 </div>
 
+                                <!-- Comentario -->
                                 <div class="mb-3">
-                                    <label for="comentario"  class="form-label">Comentario</label>
-                                    <textarea id="comentario" th:field="*{comentario}"  class="form-control"></textarea>
+                                    <label for="comentario" class="form-label">Comentario</label>
+                                    <textarea id="comentario" name="comentario" class="form-control"></textarea>
                                 </div>
+
+                                <!-- Botón de Envío -->
                                 <button type="submit" class="btn btn-primary">Agregar Calificación</button>
-                                <a class="btn btn-danger mb-3" th:href="@{/cliente/historialPedido}">Regresar</a>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -52,62 +65,8 @@
 <div th:replace="plantillas/headerCliente :: recursoJS"></div>
 
 <script th:inline="javascript">
-    async function guardarCalificacion(event) {
-        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
-        try {
-            // Obtener los valores del formulario
-            const id = document.querySelector('input[name="id"]').value;
-            const idPedido = document.getElementById('idPedido').value;
-            const idCliente = document.getElementById('idCliente').value;
-            const calificacion = document.getElementById('calificacion').value;
-            const comentario = document.getElementById('comentario').value;
-
-            // Crear un objeto JSON con los datos del formulario
-            const data = {
-                id: id,
-                idPedido: idPedido,
-                idCliente: idCliente,
-                calificacion: calificacion,
-                comentario: comentario
-            };
-
-            // Convertir el objeto JSON a cadena
-            const jsonData = JSON.stringify(data);
-
-            // Realizar la solicitud AJAX para guardar la calificación
-            const response = await fetch('/calificacion/guardar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: jsonData
-            });
-
-            if (!response.ok) {
-                throw new Error('Error en la solicitud de guardado');
-            }
-
-            // Mostrar mensaje de éxito con SweetAlert2
-            Swal.fire({
-                title: "¡Guardado!",
-                text: "La calificación ha sido guardada exitosamente",
-                icon: "success"
-            }).then(() => {
-                // Redirigir o actualizar la página según tu flujo de la aplicación
-                window.location.href = '/calificacion/nuevo';
-            });
-
-        } catch (error) {
-            // Mostrar mensaje de error con SweetAlert2
-            Swal.fire({
-                title: "Error",
-                text: "Hubo un error al guardar la calificación",
-                icon: "error"
-            });
-            console.error('Error:', error);
-        }
-    }
+}
 </script>
 
 </body>

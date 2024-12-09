@@ -1,10 +1,7 @@
 package com.backus.proyecto.controller;
 
 import com.backus.proyecto.entity.*;
-import com.backus.proyecto.repository.DetalleRepository;
-import com.backus.proyecto.repository.EntregaRepository;
-import com.backus.proyecto.repository.PedidoRepository;
-import com.backus.proyecto.repository.RepartidorRepository;
+import com.backus.proyecto.repository.*;
 import com.backus.proyecto.services.BoletaPDFService;
 import com.backus.proyecto.services.EmailServicePDF;
 import com.backus.proyecto.services.PedidoService;
@@ -41,6 +38,8 @@ public class RepartidorController {
     private BoletaPDFService boletaPDFService;
     @Autowired
     private EmailServicePDF emailServicePDF;
+    @Autowired
+    private EmpleadoRepository empleadoRepository;
 
     @GetMapping("/listar")
     public String listarRepartidor(Model model) {
@@ -65,6 +64,22 @@ public class RepartidorController {
 
         return "/formulario/repartidor/portalRepartidor/asignaciones";
     }
+    @GetMapping("/listarEntregados")
+    public String listarEntregados(Model model, HttpSession session) {
+        Repartidor repartidor = obtenerRepartidorDeSesion(session);
+
+        if (repartidor == null) {
+            model.addAttribute("error", "Debe iniciar sesión para ver sus asignaciones.");
+            return "redirect:/empleado/login";
+        }
+
+        List<Pedido> pedidosAsignados = pedidoRepository.findByRepartidorIdAndEstado(repartidor.getId(), "ENTREGADO");
+        model.addAttribute("titulo", "Lista de pedidos entregados por UD:");
+        model.addAttribute("listaPedido", pedidosAsignados);
+        model.addAttribute("mensajeList", pedidosAsignados.isEmpty() ? "Sin datos para mostrar" : "");
+
+        return "/formulario/repartidor/portalRepartidor/entregados";
+    }
     @PostMapping("/realizarEntrega")
     public String realizarEntrega(@RequestParam Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         // Obtener el objeto "empleado" desde la sesión, que puede ser un Repartidor o un Empleado
@@ -74,26 +89,14 @@ public class RepartidorController {
             return "redirect:/repartidor/logueo";
         }
 
-        // Verificar el tipo de empleado (Repartidor o Empleado)
-        /*Empleado empleado = null;
-        if (empleadoObj instanceof Repartidor) {
-            empleado = (Repartidor) empleadoObj;  // Si es Repartidor
-        } else if (empleadoObj instanceof Empleado) {
-            empleado = (Empleado) empleadoObj;  // Si es Empleado
-        }
-*/
         try {
             Pedido pedido = pedidoRepository.findById(Math.toIntExact(id))
                     .orElseThrow(() -> new NoSuchElementException("Pedido no encontrado"));
 
-            // Crear la entrega y asignar el empleado (Empleado o Repartidor)
-            //Entrega entrega = new Entrega();
-            //entrega.setFechaEntrega(LocalDateTime.now());
-            //entrega.setEmpleado(empleado);  // Asignar el empleado (de cualquier tipo)
-            //entrega.setPedido(pedido);      // Asignar el pedido
 
-            // Guardar la entrega
-            //entregaRepository.save(entrega);
+            Repartidor repartidor = obtenerRepartidorDeSesion(session);
+            Entrega entrega = new Entrega(null, LocalDateTime.now(), null, pedido, repartidor);
+            entregaRepository.save(entrega);
 
             // Cambiar el estado del pedido
             pedido.setEstado("ENTREGADO");
@@ -210,5 +213,27 @@ public class RepartidorController {
         repartidorRepository.save(repartidor);
         model.addAttribute("mensaje", "Perfil actualizado exitosamente");
         return "formulario/repartidor/portalRepartidor/perfil";
+    }
+    //mapas - rutas - ubicacion
+    @GetMapping("/ruta")
+    public String mapas(@RequestParam("id") Integer idPedido, Model model) {
+        // Busca el pedido basado en el ID
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+
+        // Obtén el cliente asociado al pedido
+        Cliente cliente = pedido.getCliente();
+
+        if (cliente != null) {
+            // Añade las coordenadas del cliente al modelo
+            model.addAttribute("latitud", cliente.getLatitud());
+            model.addAttribute("longitud", cliente.getLongitud());
+        } else {
+            model.addAttribute("mensajeList", "No se encontraron coordenadas para el cliente.");
+        }
+
+        // Añade el título de la página
+        model.addAttribute("titulo", "Trazar ruta de Backus hasta el Cliente");
+        return "/formulario/repartidor/rutas/index"; // Redirige a la página del mapa
     }
 }

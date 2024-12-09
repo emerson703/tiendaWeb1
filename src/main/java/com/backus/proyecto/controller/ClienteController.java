@@ -180,6 +180,12 @@ public class ClienteController {
 
         return "redirect:/cliente/perfil";
     }
+    @GetMapping("/mapa")
+    public String mapas(Model model) {
+        model.addAttribute("titulo", "Ubicacion del Cliente");
+        model.addAttribute("mensajeList", "Sin datos para mostrar");
+        return "/formulario/cliente/portal/mapa"; //
+    }
 
 
 }

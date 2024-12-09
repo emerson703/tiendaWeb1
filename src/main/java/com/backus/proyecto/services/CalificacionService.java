@@ -1,6 +1,8 @@
 package com.backus.proyecto.services;
+
 import com.backus.proyecto.entity.Calificacion;
 import com.backus.proyecto.repository.CalificacionRepository;
+import com.backus.proyecto.util.interfaces.CrudService;
 import com.backus.proyecto.util.interfaces.CrudServiceLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CalificacionService implements CrudServiceLong<Calificacion> {
+public class CalificacionService implements CrudService<Calificacion> {
+
     @Autowired
     private CalificacionRepository calificacionRepository;
 
@@ -19,8 +22,8 @@ public class CalificacionService implements CrudServiceLong<Calificacion> {
     }
 
     @Override
-    public Optional<Calificacion> buscarPorId(Long id) {
-        return Optional.empty();
+    public Optional<Calificacion> buscarPorId(Integer id) {
+        return calificacionRepository.findById(id);  // Aquí cambiamos Optional.empty() por findById.
     }
 
     @Override
@@ -29,11 +32,12 @@ public class CalificacionService implements CrudServiceLong<Calificacion> {
     }
 
     @Override
-    public boolean existePorId(Long id) {
-        return false;
+    public boolean existePorId(Integer id) {
+        return calificacionRepository.existsById(id);  // Deberías verificar si existe por el ID.
     }
 
     @Override
-    public void eliminarPorId(Long id) {    calificacionRepository.deleteById(id);
+    public void eliminarPorId(Integer id) {
+        calificacionRepository.deleteById(id);
     }
 }

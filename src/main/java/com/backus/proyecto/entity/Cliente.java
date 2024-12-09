@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table
+@Table(name = "cliente")
 @Data
 public class Cliente {
     @Id
@@ -23,6 +23,13 @@ public class Cliente {
     private String email;
     private String clave;
     private String telefono;
+
+    @Column(name = "latitud", nullable = true)
+    private Double latitud;
+
+    @Column(name = "longitud", nullable = true)
+    private Double longitud;
+
 
     public Integer getIdCliente() {
         return idCliente;
@@ -62,5 +69,21 @@ public class Cliente {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public Double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(Double latitud) {
+        this.latitud = latitud;
+    }
+
+    public Double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(Double longitud) {
+        this.longitud = longitud;
     }
 }

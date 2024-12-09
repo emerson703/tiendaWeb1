@@ -64,6 +64,27 @@
 			<version>5.5.13.2</version>
 		</dependency>
 
+		<!-- Dependencia de JasperReports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+
+		<!-- Dependencia de Spring Boot para JasperReports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<build>

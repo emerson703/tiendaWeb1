@@ -29,6 +29,10 @@ public class Entrega {
     @JoinColumn(name = "idPedido")
     private Pedido pedido;
 
+    @ManyToOne
+    @JoinColumn(name = "idRepartidor")
+    private Repartidor repartidor;
+
     public Integer getIdEntrega() {
         return idEntrega;
     }
@@ -59,5 +63,13 @@ public class Entrega {
 
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
+    }
+
+    public Repartidor getRepartidor() {
+        return repartidor;
+    }
+
+    public void setRepartidor(Repartidor repartidor) {
+        this.repartidor = repartidor;
     }
 }

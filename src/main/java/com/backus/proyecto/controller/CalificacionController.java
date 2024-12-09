@@ -5,6 +5,7 @@ import com.backus.proyecto.entity.Cliente;
 import com.backus.proyecto.entity.Empleado;
 import com.backus.proyecto.entity.Pedido;
 import com.backus.proyecto.repository.CalificacionRepository;
+import com.backus.proyecto.repository.ClienteRepository;
 import com.backus.proyecto.repository.PedidoRepository;
 import com.backus.proyecto.services.CalificacionService;
 import com.backus.proyecto.services.ClienteService;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.NoSuchElementException;
 
@@ -32,7 +34,8 @@ public class CalificacionController {
     private PedidoRepository pedidoRepository;
     @Autowired
     private ClienteService clienteService;
-
+    @Autowired
+    private ClienteRepository clienteRepository;
     @GetMapping("/listar")
     public String listarCalificaciones(Model model) {
         model.addAttribute("titulo", "Lista de Calificaciones por parte de los clientes");
@@ -41,33 +44,48 @@ public class CalificacionController {
         return "/formulario/trabajador/calificacion/index"; //
     }
     @PostMapping("/guardar")
-    public ResponseEntity<String> guardarCalificacion(@RequestBody Calificacion calificacion) {
-        calificacionService.guardar(calificacion);
-        return ResponseEntity.ok("Registro grabado exitosamente");
+    public String guardarCalificacion(@RequestParam int idPedido,
+                                      @RequestParam Long idCliente,
+                                      @RequestParam int calificacion,
+                                      @RequestParam(required = false) String comentario,
+                                      RedirectAttributes redirectAttributes) {
+
+        // Crear una nueva calificación
+        Calificacion nuevaCalificacion = new Calificacion();
+
+        // Buscar entidades relacionadas
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado"));
+
+        // Asignar valores
+        nuevaCalificacion.setPedido(pedido);
+        nuevaCalificacion.setCliente(cliente);
+        nuevaCalificacion.setCalificacion(calificacion);
+        nuevaCalificacion.setComentario(comentario);
+
+        // Guardar la calificación
+        calificacionRepository.save(nuevaCalificacion);
+
+        // Agregar mensaje de éxito
+        redirectAttributes.addFlashAttribute("mensaje", "¡Calificación guardada con éxito!");
+
+        return "redirect:/cliente/historialPedido"; // Cambia según tu flujo
     }
+
     private Cliente obtenerClienteDeSesion(HttpSession session) {
         return (Cliente) session.getAttribute("cliente");
     }
 
     @GetMapping("/nuevo")
     public String mostrarFormCalificacion(@RequestParam Long id, Model model, HttpSession session) {
-       /* if (obtenerClienteDeSesion(session) == null) {
-            return "redirect:/cliente/login";
-        }
-        Calificacion calificacion = calificacionRepository.findById((id))
-                .orElseThrow(() -> new NoSuchElementException("Pedido no encontrado"));
 
-        model.addAttribute("titulo", "Detalle de la calificacion");
-        model.addAttribute("calificacion", calificacion);
-        //model.addAttribute("listPedidoDetalle", calificacionService.buscarPorId((id))); */
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         model.addAttribute("idPe", id);
         model.addAttribute("idCli", cliente.getIdCliente());
-        return "formulario/cliente/portal/calificacion";
-    }
-    @GetMapping("/new")
-    public String formularioNuevo(Model model) {
 
         return "formulario/cliente/portal/calificacion";
     }
+
 }
