@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerCliente :: head">
+  <div th:replace="plantillas/headerCliente :: sidebar"></div>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    /* Ajustes para el mapa */
+    #map {
+        height: 100%; /* Altura al 100% del contenedor padre */
+        width: 100%; /* Ancho al 100% */
+        border-radius: 8px; /* Opcional: bordes redondeados para mejorar apariencia */
+    }
+
+    /* Ajustes para el card-body */
+    .card-body {
+        position: relative; /* Necesario para que el mapa ocupe todo el espacio */
+        height: 400px; /* Altura fija del card-body (ajustar según diseño) */
+    }
+  </style>
+</head>
+
+<body>
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div th:replace="plantillas/headerCliente :: sidebar"></div>
+
+  <!-- Main Content -->
+  <div class="main-content w-100">
+    <div class="container mt-4">
+      <div class="card shadow-lg border-0 rounded-lg mb-4">
+        <div class="card-body p-4">
+          <h4 th:text="${titulo}" class="text-center"></h4>
+
+          <!-- Formulario para registrar coordenadas -->
+          <form th:action="@{/cliente/guardar-coordenadas}" method="post" class="mt-4">
+            <div class="mb-3">
+              <label for="latitud" class="form-label">Latitud</label>
+              <input type="text" id="latitud" name="latitud" class="form-control" placeholder="Ingrese la latitud" required>
+            </div>
+            <div class="mb-3">
+              <label for="longitud" class="form-label">Longitud</label>
+              <input type="text" id="longitud" name="longitud" class="form-control" placeholder="Ingrese la longitud" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar Coordenadas</button>
+          </form>
+
+          <!-- Contenedor del mapa -->
+          <div id="map" ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS Resources -->
+<div th:replace="plantillas/headerCliente :: recursoJS"></div>
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+  // Inicializa el mapa
+  const map = L.map('map').setView([-12.0464, -77.0428], 12); // Coordenadas iniciales (Lima, Perú)
+
+  // Capa base de OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(map);
+
+  // Marcador para seleccionar coordenadas
+  let marker;
+
+  // Evento para capturar clic en el mapa
+  map.on('click', function (e) {
+    const { lat, lng } = e.latlng;
+
+    // Agregar o mover marcador
+    if (marker) {
+      marker.setLatLng([lat, lng]);
+    } else {
+      marker = L.marker([lat, lng]).addTo(map);
+    }
+
+    // Actualizar inputs de latitud y longitud
+    document.getElementById('latitud').value = lat;
+    document.getElementById('longitud').value = lng;
+  });
+</script>
+
+</body>
+</html>

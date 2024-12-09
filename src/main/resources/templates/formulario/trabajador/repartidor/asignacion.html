@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title" th:text="${asignacion.id != null} ? 'Editar Asignación' : 'Asignar Transporte a Repartidor'"></h1>
+
+            <!-- Cambiar dinámicamente la acción del formulario -->
+            <form th:action="@{${asignacion.id != null} ? '/asignaciones/editar/' + ${asignacion.id} : '/asignaciones/crear'}"
+                  th:object="${asignacion}"
+                  method="post">
+
+                <div class="form-group">
+                    <label for="repartidor">Repartidor:</label>
+                    <select class="form-control" id="repartidor" th:field="*{repartidor.id}">
+                        <option th:each="repa : ${repartidores}"
+                                th:value="${repa.id}"
+                                th:text="${repa.nombre}"
+                                th:selected="${repa.id == asignacion.repartidor?.id}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transporte">Transporte:</label>
+                    <select class="form-control" id="transporte" th:field="*{transporte.id}">
+                        <option th:each="trans : ${transportes}"
+                                th:value="${trans.id}"
+                                th:text="${trans.placa}"
+                                th:selected="${trans.id == asignacion.transporte?.id}"></option>
+                    </select>
+                </div>
+
+                <!-- Cambiar dinámicamente el texto del botón -->
+                <button class="btn btn-primary" type="submit" th:text="${asignacion.id != null} ? 'Actualizar' : 'Asignar'"></button>
+            </form>
+        </div>
+    </div>
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+</html>

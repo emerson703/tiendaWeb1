@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+  <div class="card">
+
+    <div class="card-body">
+      <h5 class="card-title" th:text="${titulo}" >Titulo por defecto</h5>
+      <a class="btn btn-danger mb-3" th:href="@{/empleado/pedidosPendientes}">regresar</a>
+      <!---->
+      <form id="from" th:action="@{/empleado/editarPedido}" method="post" th:object="${pedido}" onsubmit="guardarEmpleado(event)">
+        <input type="hidden" th:field="*{idPedido}"/>
+        <div class="form-group">
+          <label>Nombre del Cliente:</label>
+          <input type="text" class="form-control" id="nombre" th:field="*{anonimoNombre}" required />
+        </div>
+        <div class="form-group">
+          <label>Correo del Cliente:</label>
+          <input type="text" class="form-control" id="email" th:field="*{anonimoEmail}" required />
+        </div>
+        <div class="form-group">
+          <label>Telefono del Cliente:</label>
+          <input type="text" class="form-control" id="telefono" th:field="*{anonimoTelefono}" required />
+        </div>
+        <div class="form-group">
+          <label>Cantidad:</label>
+          <input type="text" class="form-control" id="cantidad" th:field="*{cantidadP}" required />
+        </div>
+        <div class="form-group">
+          <label>Fecha de Operacion:</label>
+          <input type="text" class="form-control" id="fecha" th:field="*{fechaOperacion}" required />
+        </div>
+
+        <div class="form-group">
+          <label>Estado:</label>
+          <input type="text" class="form-control" id="estado" th:field="*{estado}" required />
+        </div>
+        <div class="form-group">
+          <label>Metodo de Pago:</label>
+          <input type="text" class="form-control" id="pago" th:field="*{metodoPago}" required />
+        </div>
+        <input type="hidden" th:field="*{cliente.idCliente}"/>
+        <input type="hidden" th:field="*{repartidor.id}"/>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+
+
+    </div>
+  </div>
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+<script th:inline="javascript">
+  async function guardarEmpleado(event) {
+  event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+  try {
+      // Obtener los valores del formulario
+      const id = document.querySelector('input[name="id"]').value;
+      const correo = document.getElementById('correo').value;
+      const clave = document.getElementById('clave').value;
+      const nombre = document.getElementById('nombre').value;
+      const apellido = document.getElementById('apellido').value;
+      const estado = document.getElementById('estado') ? document.getElementById('estado').value === 'true' : true; // Convertir a booleano
+
+      // Crear un objeto JSON con los datos del formulario
+      const data = {
+          id:id,
+          correo: correo,
+          clave: clave,
+          nombre: nombre,
+          apellido: apellido,
+          rol: 2,
+          visible: estado // Aquí 'estado' ya es booleano
+      };
+
+      // Convertir el objeto JSON a cadena
+      const jsonData = JSON.stringify(data);
+
+      // Realizar la solicitud AJAX para guardar el empleado
+      const response = await fetch('/empleado/guardar', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: jsonData
+      });
+
+      if (!response.ok) {
+          throw new Error('Error en la solicitud de guardado');
+      }
+
+      // Mostrar mensaje de éxito con SweetAlert2
+      Swal.fire({
+          title: "¡Guardado!",
+          text: "El empleado ha sido guardado exitosamente", // Cambiado para reflejar el contenido
+          icon: "success"
+      }).then(() => {
+          // Redirigir o actualizar la página según tu flujo de la aplicación
+          window.location.href = '/empleado/listar';
+      });
+
+  } catch (error) {
+      // Mostrar mensaje de error con SweetAlert2
+      Swal.fire({
+          title: "Error",
+          text: "Hubo un error al guardar el empleado", // Cambiado para reflejar el contenido
+          icon: "error"
+      });
+      console.error('Error:', error);
+  }
+}
+
+</script>
+</body>
+</html>

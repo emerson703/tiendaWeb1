@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="plantillas/headerAdmin :: head"></head></head>
+<div th:replace="plantillas/headerAdmin :: sidebar"></div>
+<main id="main" class="main">
+  <div class="card">
+
+    <div class="card-body">
+      <h5 class="card-title" th:text="${titulo}" >Titulo por defecto</h5>
+      <a class="btn btn-danger mb-3" th:href="@{/transporte/listar}">regresar</a>
+      <!---->
+      <form id="from" th:action="@{/transporte/guardar}" method="post" th:object="${transporte}" onsubmit="guardarRepartidor(event)">
+        <input type="hidden" th:field="*{id}"/> <!-- Asegúrate de incluir el ID si lo necesitas -->
+
+        <div class="form-group">
+          <label>Placa:</label>
+          <input type="text" class="form-control" id="placa" th:field="*{placa}" required />
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Vehiculo:</label>
+          <input type="text" class="form-control" id="tipo" th:field="*{tipo}" required />
+        </div>
+
+        <div class="form-group">
+          <label>Modelo de Transporte:</label>
+          <input type="text" class="form-control" id="modelo" th:field="*{modelo}" required />
+        </div>
+
+        <div class="form-group">
+          <label>Marca de Transporte:</label>
+          <input type="text" class="form-control" id="marca" th:field="*{marca}" required />
+        </div>
+        <div class="form-group">
+          <label>Estado:</label>
+          <input type="text" class="form-control" id="estado" th:field="*{estado}" required />
+        </div>
+        <div class="form-group">
+          <label>Observaciones:</label>
+          <input type="text" class="form-control" id="observaciones" th:field="*{observaciones}" required />
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </form>
+
+
+    </div>
+  </div>
+</main><!-- End #main -->
+<div th:replace="plantillas/headerAdmin :: recursoJS"></div>
+
+<script th:inline="javascript">
+  async function guardarRepartidor(event) {
+  event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+
+  try {
+      // Obtener los valores del formulario
+      const id = document.querySelector('input[name="id"]').value;
+      const placa = document.getElementById('placa').value;
+      const tipo = document.getElementById('tipo').value;
+      const modelo = document.getElementById('modelo').value;
+      const marca = document.getElementById('marca').value;
+      const estado = document.getElementById('estado').value;
+      const observaciones = document.getElementById('observaciones').value;
+
+      // Crear un objeto JSON con los datos del formulario
+      const data = {
+          id:id,
+          placa: placa,
+          tipo: tipo,
+          modelo: modelo,
+          marca: marca,
+          estado: estado,
+          observaciones: observaciones
+      };
+
+      // Convertir el objeto JSON a cadena
+      const jsonData = JSON.stringify(data);
+
+      // Realizar la solicitud AJAX para guardar el empleado
+      const response = await fetch('/transporte/guardar', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: jsonData
+      });
+
+      if (!response.ok) {
+          throw new Error('Error en la solicitud de guardado');
+      }
+
+      // Mostrar mensaje de éxito con SweetAlert2
+      Swal.fire({
+          title: "¡Guardado!",
+          text: "El Transporte ha sido guardado exitosamente", // Cambiado para reflejar el contenido
+          icon: "success"
+      }).then(() => {
+          // Redirigir o actualizar la página según tu flujo de la aplicación
+          window.location.href = '/transporte/listar';
+      });
+
+  } catch (error) {
+      // Mostrar mensaje de error con SweetAlert2
+      Swal.fire({
+          title: "Error",
+          text: "Hubo un error al guardar el transporte", // Cambiado para reflejar el contenido
+          icon: "error"
+      });
+      console.error('Error:', error);
+  }
+}
+
+</script>
+
+</body>
+</html>
